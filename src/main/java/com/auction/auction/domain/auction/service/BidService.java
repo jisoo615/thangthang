@@ -1,0 +1,67 @@
+package com.auction.auction.domain.auction.service;
+
+import com.auction.auction.domain.auction.dto.BidDTO;
+import com.auction.auction.domain.auction.dto.BidRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class BidService {
+    // todo: 입찰 데이터 갱신, redis -> db 저장 테스트
+    // todo: 낙찰확정/경매종료기능, PG결제기능-낙관전략, 로그인(경매 개최자 비지니스계정, 입찰/구매자 일반유저계정)
+    private final RedisTemplate <String, Object> redisTemplate;
+    private static final String BID_LOG_KEY = "auction:bid:logs";
+
+    //입찰 최고가 sorted set -> key = auction:{auctionId}:rank, value = member={bidderId}, score={price}
+    //입찰 기록 list -> key=auction:bid:logs, value=bidDTO
+    public void validateAndSaveBid(Long auctionId, Long bidderId, Long price){
+        String priceKey = "auction:" + auctionId + ":rank";
+        List<String> keys = Arrays.asList(priceKey, BID_LOG_KEY);
+
+        BidDTO bidDTO = BidDTO.builder()
+                .auctionId(auctionId)
+                .bidderId(bidderId)
+                .price(price)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        // Lua Script 실행 - EVAL 명령어를 통해 스크립트를 Redis 서버로 보냄
+        RedisScript<Long> script = new DefaultRedisScript<>(BID_SCRIPT, Long.class);
+        // execute(스크립트 객체, key 리스트, argv[1], argv[2], argv[3] ...)
+        Long result = redisTemplate.execute(script, keys, bidderId, price, bidDTO);
+
+        // 실패
+        if (result == 0) {
+            throw new IllegalArgumentException("입찰 금액이 현재 최고가보다 낮거나 같습니다. 다시 시도해주세요.");
+        }
+
+    }
+
+    // 원자성을 위해 루아스크립트로, 빠름
+    private static final String BID_SCRIPT =
+            "local member = ARGV[1]; "+
+                    "local newPrice = ARGV[2]; "+
+                    "local topBid = redis.call('ZREVRANGE', key, 0, 0, 'WITHSCORES'); "+ // [bidderId, price]
+                    "local highestPrice = 0; "+
+
+                    "if #topBid > 0 then" +
+                    "   highestPrice = tonumber(topBid[2])"+
+                    "end; "+
+
+                    "if highestPrice < price then "+
+                    "   redis.call('ZADD', key, price, member); "+
+                    "   redis.call('RPUSH', KEYS[2], ARGV[3]); "+
+                    "   return 1; "+
+                    "else "+
+                    "   return false; "+
+                    "end; ";
+
+}
