@@ -49,14 +49,14 @@ public class BidService {
     private static final String BID_SCRIPT =
             "local member = ARGV[1]; "+
                     "local newPrice = ARGV[2]; "+
-                    "local topBid = redis.call('ZREVRANGE', key, 0, 0, 'WITHSCORES'); "+ // [bidderId, price]
+                    "local topBid = redis.call('ZREVRANGE', KEYS[1], 0, 0, 'WITHSCORES'); "+ // [bidderId, price]
                     "local highestPrice = 0; "+
 
                     "if #topBid > 0 then" +
                     "   highestPrice = tonumber(topBid[2])"+
                     "end; "+
 
-                    "if highestPrice < price then "+
+                    "if highestPrice < newPrice then "+
                     "   redis.call('ZADD', key, price, member); "+
                     "   redis.call('RPUSH', KEYS[2], ARGV[3]); "+
                     "   return 1; "+
