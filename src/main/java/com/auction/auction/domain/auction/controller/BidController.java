@@ -17,13 +17,13 @@ public class BidController {
     private final BidService bidService;
 
     // /pub/bid (클라이언트 -> 서버)
-    @MessageMapping("/bid/")
+    @MessageMapping("/bid")
     public void message(BidRequest request) {
         log.info("입찰 요청 auctionId={}, price={}", request.getAuctionId() , request.getPrice());
         try {
             // 가격이 더 높은지 검증 후 저장
             bidService.validateAndSaveBid(request.getAuctionId(), request.getBidderId(), request.getPrice());
-
+            log.info("입찰 시도 옴");
             // /sub/auction/{auctionId} 로 갱신가 알리기
             BidResponse response = BidResponse.builder()
                     .auctionId(request.getAuctionId())

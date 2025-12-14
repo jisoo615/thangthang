@@ -30,7 +30,7 @@ public class BidService {
                 .auctionId(auctionId)
                 .bidderId(bidderId)
                 .price(price)
-                .createdAt(LocalDateTime.now())
+//                .createdAt(LocalDateTime.now())
                 .build();
 
         // Lua Script 실행 - EVAL 명령어를 통해 스크립트를 Redis 서버로 보냄
@@ -44,24 +44,30 @@ public class BidService {
         }
 
     }
+    /** redis에서 저장된 값 보기
+     * auction_id가 1인 경매의 최고가, 입찰자 id
+     * ZRANGE auction:1:rank 0 -1 WITHSCORES
+     * 전체 입찰 내역
+     * LRANGE auction:bid:logs 0 -1
+    **/
 
     // 원자성을 위해 루아스크립트로, 빠름
     private static final String BID_SCRIPT =
-            "local member = ARGV[1]; "+
-                    "local newPrice = ARGV[2]; "+
-                    "local topBid = redis.call('ZREVRANGE', KEYS[1], 0, 0, 'WITHSCORES'); "+ // [bidderId, price]
-                    "local highestPrice = 0; "+
+            "local member = ARGV[1]; " +
+            "local newPrice = tonumber(ARGV[2]); " +
+            "local topBid = redis.call('ZREVRANGE', KEYS[1], 0, 0, 'WITHSCORES'); " +
+            "local highestPrice = 0; " +
 
-                    "if #topBid > 0 then" +
-                    "   highestPrice = tonumber(topBid[2])"+
-                    "end; "+
+            "if #topBid > 0 then " +
+            "   highestPrice = tonumber(topBid[2]); " +
+            "end; " +
 
-                    "if highestPrice < newPrice then "+
-                    "   redis.call('ZADD', key, price, member); "+
-                    "   redis.call('RPUSH', KEYS[2], ARGV[3]); "+
-                    "   return 1; "+
-                    "else "+
-                    "   return false; "+
-                    "end; ";
+            "if highestPrice < newPrice then " +
+            "   redis.call('ZADD', KEYS[1], newPrice, member); " +
+            "   redis.call('RPUSH', KEYS[2], ARGV[3]); " +
+            "   return 1; " +
+            "else " +
+            "   return 0; " +
+            "end;";
 
 }
