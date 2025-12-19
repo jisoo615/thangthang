@@ -13,8 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class BidService {
-    // todo: 입찰 데이터 갱신, redis -> db 저장 테스트
-    // todo: 낙찰확정/경매종료기능, PG결제기능-낙관전략, 로그인(경매 개최자 비지니스계정, 입찰/구매자 일반유저계정)
     private final RedisTemplate <String, Object> redisTemplate;
     private static final String BID_LOG_KEY = "auction:bid:logs";
 
@@ -41,6 +39,7 @@ public class BidService {
         }
 
     }
+
     /** redis에서 저장된 값 보기
      * auction_id가 1인 경매의 최고가, 입찰자 id
      * ZRANGE auction:1:rank 0 -1 WITHSCORES

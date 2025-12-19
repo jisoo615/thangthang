@@ -24,6 +24,8 @@ public class Auction extends BaseTimeEntity {
 
     private Long winningBidderId;
 
+    private AuctionStatus status;
+
     @Column(nullable = false)
     private Long startPrice; // 시작가
 
@@ -46,5 +48,9 @@ public class Auction extends BaseTimeEntity {
     public void updateWinner(Long price, Long winning_bidder_id) {
         this.winningPrice = price;
         this.winningBidderId = winning_bidder_id;
+        this.status = AuctionStatus.ENDED;
+    }
+    public void updateStatus(AuctionStatus status) {
+        this.status = status;
     }
 }

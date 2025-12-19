@@ -43,4 +43,10 @@ public class PayController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @GetMapping("orders/list")
+    public ResponseEntity getOrderList(){// 개인 주문 목록 리스트
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
