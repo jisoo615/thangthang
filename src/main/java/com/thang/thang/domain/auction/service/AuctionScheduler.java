@@ -26,7 +26,7 @@ public class AuctionScheduler {
 
         // 종료시켜 -> 진행중이던 경매 종료 처리, 낙찰자와 낙찰가 저장해주기, 오더에 넣어주기
         for(Auction auction : auctionList){
-            auctionService.endAuction(auction.getId());
+            auctionService.endAuction(auction.getAuctionId());
         }
     }
 

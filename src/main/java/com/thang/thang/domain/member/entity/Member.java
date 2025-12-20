@@ -11,9 +11,8 @@ import java.time.LocalDateTime;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    private Long id;
+    private Long memberId;
 
     @Column(nullable = false)
     private String email;
@@ -26,13 +25,10 @@ public class Member {
     private UserRole role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "ban_status", nullable = false)
-    private BanStatus banStatus = BanStatus.ACTIVE;
+    private BanStatus banStatus;
 
-    @Column(name = "ban_expires_at")
     private LocalDateTime banExpiresAt;
 
-    @Column(name = "refresh_token")
     private String refreshToken;
 
     @Builder

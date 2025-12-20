@@ -12,18 +12,18 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "auction")
+@Table(name = "auction_info")
 public class Auction extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long auctionId;
 
     @Column(nullable = false)
     private Long productId; // 상품과 경매 분리 - 느슨한 결합
 
     private Long winningBidderId;
 
+    @Enumerated(EnumType.STRING)
     private AuctionStatus status;
 
     @Column(nullable = false)

@@ -15,7 +15,7 @@ import java.util.UUID;
 @Table(name = "orders") // MySQL 예약어 order 충돌 방지
 public class Order extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long orderId;
 
     @Column(nullable = false, unique = true)

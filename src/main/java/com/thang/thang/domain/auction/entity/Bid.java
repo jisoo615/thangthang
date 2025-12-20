@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "bid")
 public class Bid extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
+    private Long BidId;
 
     @Column(nullable = false)
     private Long auctionId; // 데이터를 한번에 많이 쓰고 읽어야 해서, 느슨한 결합

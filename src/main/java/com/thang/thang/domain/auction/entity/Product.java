@@ -14,11 +14,13 @@ import lombok.NoArgsConstructor;
 public class Product extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long productId;
+
+    private Long sellerId;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
+    private String content;
 
     @Column(nullable = false)
     private Long price; // 가격 or 경매 시작가
@@ -28,7 +30,7 @@ public class Product extends BaseTimeEntity {
 
     @Builder
     public Product(String name, Long price, Integer stock) {
-        this.name = name;
+        this.title = name;
         this.price = price;
         this.stock = stock;
     }
