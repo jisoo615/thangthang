@@ -33,6 +33,9 @@ public class Order extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // PENDING, PAID, CANCELLED, FAILED, REFUNDED
 
+    @Enumerated(EnumType.STRING)
+    private OrderType type;
+
     @Builder
     public Order(Long memberId, Long productId, Long finalPrice) {
         this.orderNo = UUID.randomUUID().toString(); // 주문번호 자동 생성
@@ -40,6 +43,7 @@ public class Order extends BaseTimeEntity {
         this.productId = productId;
         this.finalPrice = finalPrice;
         this.status = OrderStatus.PENDING;
+        this.orderNo = UUID.randomUUID().toString();
     }
 
     public void completePayment() {

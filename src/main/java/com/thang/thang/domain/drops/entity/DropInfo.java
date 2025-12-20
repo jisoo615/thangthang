@@ -1,10 +1,14 @@
 package com.thang.thang.domain.drops.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Table(name = "drop_info")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 public class DropInfo {
 
     @Id
@@ -17,8 +21,16 @@ public class DropInfo {
     private Long stockQuantity;
 
     @Column(nullable = false)
+    private Long price;
+
+    @Column(nullable = false)
     private LocalDateTime openTime;
 
     @Column(nullable = false)
     private LocalDateTime closeTime;
+
+    public void downStockQuantity(){
+        this.stockQuantity -= 1;
+    }
 }
+

@@ -15,4 +15,8 @@ public class OrderService {
     public List<Order> getOrderList(Long memberId){
         return orderRepository.findAllByMemberId(memberId);
     }
+
+    public Order getOrderById(Long orderId){
+        return orderRepository.findById(orderId).orElseThrow();
+    }
 }
