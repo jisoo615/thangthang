@@ -49,4 +49,5 @@ public class Order extends BaseTimeEntity {
     public void completePayment() {
         this.status = OrderStatus.PAID;
     }
+    public void failPayment() {this.status = OrderStatus.FAILED;}
 }

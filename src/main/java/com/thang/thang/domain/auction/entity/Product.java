@@ -25,20 +25,13 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false)
     private Long price; // 가격 or 경매 시작가
 
-    @Column(nullable = false)
-    private Integer stock; // 남은 수량 (한정수량, 경매=1)
-
     @Builder
-    public Product(String name, Long price, Integer stock) {
-        this.title = name;
+    public Product(Long price, String title, String content, Long sellerId, Long productId) {
         this.price = price;
-        this.stock = stock;
+        this.title = title;
+        this.content = content;
+        this.sellerId = sellerId;
+        this.productId = productId;
     }
 
-    public void decreaseStock(int quantity) {
-        if (this.stock - quantity < 0) {
-            throw new IllegalArgumentException("재고 부족");
-        }
-        this.stock -= quantity;
-    }
 }

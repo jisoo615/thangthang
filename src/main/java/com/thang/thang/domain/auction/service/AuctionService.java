@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -24,14 +25,23 @@ public class AuctionService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     // 옥션 등록
-    public void createAuction(AuctionRequest request) {
+    public Auction createAuction(AuctionRequest request) {
         Auction auction = Auction.builder()
                 .startPrice(request.getStartPrice())
                 .startTime(request.getStartTime())
                 .productId(request.getProductId())
                 .build();
-        auctionRepository.save(auction);
+        return auctionRepository.save(auction);
     }
+
+    public Auction findAuctionById(Long auctionId) {
+        return auctionRepository.findById(auctionId).orElseThrow();
+    }
+
+    public List<Auction> findAllAuctions() {
+        return auctionRepository.findAll();
+    }
+
 
     // 옥션 낙찰
     @Transactional

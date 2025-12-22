@@ -1,14 +1,18 @@
 package com.thang.thang.domain.drops.service;
 
+import com.thang.thang.domain.drops.dto.DropRequest;
 import com.thang.thang.domain.drops.entity.DropInfo;
 import com.thang.thang.domain.drops.repository.DropInfoRepository;
 import com.thang.thang.domain.pay.entity.Order;
 import com.thang.thang.domain.pay.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+@Service
 @Slf4j
 @RequiredArgsConstructor
 public class DropService {
@@ -39,6 +43,25 @@ public class DropService {
         return null;
     }
 
-    // 결제하기
+    // 드랍 등록
+    public DropInfo createDropInfo(DropRequest request){
+        DropInfo dropInfo = DropInfo.builder()
+                .productId(request.getProductId())
+                .stockQuantity(request.getStockQuantity())
+                .price(request.getPrice())
+                .closeTime(request.getCloseTime())
+                .openTime(request.getOpenTime())
+                .build();
 
+        return dropInfoRepository.save(dropInfo);
+    }
+
+    public List<DropInfo> findAllDrops(){
+
+        return dropInfoRepository.findAll();
+    }
+
+    public DropInfo findDropById(Long id){
+        return  dropInfoRepository.findById(id).orElseThrow();
+    }
 }
